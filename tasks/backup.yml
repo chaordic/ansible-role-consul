@@ -1,0 +1,38 @@
+---
+- name: create backup_args variable
+  set_fact:
+    backup_args: []
+
+- name: prepare backup args
+  set_fact:
+    backup_args: "{{ backup_args }} +  [ '-{{ item.key }} {{ item.value }}' ]"
+  with_dict: "{{ consul_backup_config }}"
+  when: consul_backup_config is defined
+
+- name: check if installed
+  stat:
+    path: "{{ consul_bin_dir }}/consul-backinator"
+  register: install_result
+
+- name: download backup tool
+  unarchive:
+    src: "{{ consul_backup_url }}"
+    dest: "{{ consul_bin_dir }}"
+    extra_opts:
+      - "--strip=2"
+    remote_src: true
+  when: install_result.stat.exists == False
+
+- name: create backup tool symlink
+  file:
+    src: "{{ consul_bin_dir }}/consul-backinator-{{ consul_backup_version }}"
+    dest: "{{ consul_bin_dir }}/consul-backinator"
+    state: link
+  when: install_result.stat.exists == False
+
+- name: create consul backup scheduler
+  cron:
+    name: "consul backup"
+    minute: "0"
+    hour: "{{ consul_backup_hour }}"
+    job: "consul-backinator backup {{ backup_args | join(' ') }}"

@@ -1,2 +1,5 @@
 ---
-# tasks file for ansible-role-consul
+- include: consul.yml
+
+- include: backup.yml
+  when: consul_backup_enabled == true

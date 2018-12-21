@@ -1,45 +1,81 @@
-Ansible Role: Consul
-=========
-
+# Ansible Role: Consul
 An ansible role to install and configure Consul agent, this role was customized to use Consul in AWS.
 
-Requirements
-------------
+## Requirements
+- [Ansible >= 2.5](https://ansible.com/)
+- OS based on systemd
 
-None.
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including
-any variables that are in defaults/main.yml, vars/main.yml, and any variables
-that can/should be set via parameters to the role. Any variables that are read
-from other roles and/or the global scope (ie. hostvars, group vars, etc.) should
-be mentioned here as well.
+Please look at the [defaults/main.yml](defaults/main.yml) to see all default variables.
 
-Dependencies
-------------
+```yml
+---
+consul_config:
+  server: true
+  data_dir: "/var/consul"
+  ui: true
+```
+The mandatory variable is the `consul_config`, this dict is composed by [Consul options](https://www.consul.io/docs/agent/options.html).
 
-A list of other roles hosted on Galaxy should go here, plus any details in
-regards to parameters that may need to be set for other roles, or variables that
-are used from other roles.
+```yml
+---
+consul_backup_config:
+  file: "/tmp/consul.bkp"
+```
+The mandatory variable is the `consul_backup_config`, this dict is composed by [Consul Backinator options](https://github.com/myENA/consul-backinator#backup-options).
 
-Example Playbook
-----------------
+## Example Playbook
 
-Including an example of how to use your role (for instance, with variables
-passed in as parameters) is always nice for users too:
+```yml
+---
+- name: "Consul server"
+  hosts: servers
+  gather_facts: true
+  vars:
+    # Consul
+    consul_config:
+      server: true
+      datacenter: chaordic
+      data_dir: "{{ consul_data_dir }}"
+      bind_addr: "{{ ansible_default_ipv4.address }}"
+      ui: true
+      client_addr: "0.0.0.0"
 
-    - hosts: servers
-      roles:
-         - { role: ansible-role-consul, x: 42 }
+    # Consul Backup
+    consul_backup_enabled: true
+    consul_backup_hour: 12
+    consul_backup_config:
+      file: "/tmp/consul.bkp"
 
-License
--------
+  roles:
+    - role: ansible-role-consul
+      tags: consul
+```
 
-GPLv3
 
-Author Information
-------------------
+## Development
 
+### Requirements
+
+- [Python](https://www.python.org)
+- [Ansible](https://ansible.com/)
+- [Docker](https://docker.com)
+
+### Configuring the environment:
+
+Install Python dependencies (Recommend using the Python Virtualenv):
+
+```sh
+$ pip install -r requirements.txt
+```
+
+### Running tests
+After the installation of python dependencies run the command below:
+```sh
+$ molecule test
+```
+
+## Author Information
 Cloud Infrastructure Team, Linx Impulse
