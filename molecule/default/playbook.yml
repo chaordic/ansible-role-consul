@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    consul_backup_enabled: true
+  roles:
+    - role: ansible-role-consul

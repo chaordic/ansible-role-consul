@@ -1,0 +1,31 @@
+---
+# Consul
+consul_group: "consul"
+consul_user: "consul"
+
+consul_bin_dir: "/usr/bin"
+consul_config_dir: "/etc/consul"
+consul_configd_dir: "{{ consul_config_dir }}/consul.d"
+consul_data_dir: "/var/consul"
+consul_run_dir_name: "consul"
+consul_run_dir: "/run/{{ consul_run_dir_name }}"
+
+consul_version: "1.4.0"
+consul_bin_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
+
+consul_config:
+  data_dir: "{{ consul_data_dir }}"
+  log_level: "INFO"
+  enable_syslog: true
+  leave_on_terminate: true
+  telemetry:
+    prometheus_retention_time: 24h
+
+consul_systemd_state: started
+consul_systemd_enabled: true
+
+# Consul Backinator
+consul_backup_version: "1.6.5"
+consul_backup_url: "https://github.com/myENA/consul-backinator/releases/download/v{{ consul_backup_version }}/consul-backinator-{{ consul_backup_version }}-amd64-linux.tar.gz"
+consul_backup_hour: "0"
+consul_backup_enabled: false

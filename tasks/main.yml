@@ -1,0 +1,5 @@
+---
+- include: consul.yml
+
+- include: backup.yml
+  when: consul_backup_enabled == true
