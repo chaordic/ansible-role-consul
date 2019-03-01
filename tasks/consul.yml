@@ -11,40 +11,40 @@
     system: true
     state: present
 
-- name: create folders
+- name: create directories
   file:
     path: "{{ item }}"
     state: directory
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
   with_items:
-    - "{{ consul_bin_dir }}"
-    - "{{ consul_config_dir }}"
-    - "{{ consul_configd_dir }}"
-    - "{{ consul_data_dir }}"
-    - "{{ consul_run_dir }}"
+    - "{{ consul_dir_bin }}"
+    - "{{ consul_dir_config }}"
+    - "{{ consul_dir_configd }}"
+    - "{{ consul_dir_data }}"
+    - "{{ consul_dir_run }}"
 
 - name: install dependencies
   package:
     name: unzip
     state: present
 
-- name: check if installed
+- name: check if consul is installed
   stat:
-    path: "{{ consul_bin_dir }}/consul"
+    path: "{{ consul_dir_run }}/consul"
   register: install_result
 
 - name: download binary
   unarchive:
     src: "{{ consul_bin_url }}"
-    dest: "{{ consul_bin_dir }}"
+    dest: "{{ consul_dir_bin }}"
     remote_src: true
   when: install_result.stat.exists == False
 
 - name: create configuration
   template:
     src: "config.json.j2"
-    dest: "{{ consul_config_dir }}/config.json"
+    dest: "{{ consul_dir_config }}/config.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0600
