@@ -1,0 +1,12 @@
+---
+- name: create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+  with_items:
+    - "{{ consul_dir_bin }}"
+    - "{{ consul_dir_config }}"
+    - "{{ consul_dir_data }}"
+    - "{{ consul_dir_run }}"

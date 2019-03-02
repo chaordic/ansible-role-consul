@@ -1,5 +1,21 @@
 ---
-- include: consul.yml
+- include: users.yml
+  tags: consul-users
+
+- include: dirs.yml
+  tags: consul-dirs
+
+- include: install.yml
+  tags: consul-install
+
+- include: service.yml
+  tags:
+  - consul-service
+  - consul-systemd
+
+- include: config.yml
+  tags: consul-config
 
 - include: backup.yml
-  when: consul_backup_enabled == true
+  tags: consul-backup
+  when: consul_backup_enabled
