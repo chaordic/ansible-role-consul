@@ -3,23 +3,37 @@
 consul_user: consul
 consul_group: consul
 
+consul_dependencies:
+  - unzip
+
 consul_dir_bin: /usr/bin
 consul_dir_config: /etc/consul
-consul_dir_configd: "{{ consul_config_dir }}/consul.d"
 consul_dir_data: /var/consul
 consul_dir_run: /run/consul
 
 consul_version: 1.4.2
 consul_bin_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
 
+consul_servers:
+  - localhost
+
+# syslog
+consul_syslog_enabled: true
+
 # systemd
 consul_systemd_state: started
 consul_systemd_enabled: true
 
+# config file
 consul_config:
   data_dir: "{{ consul_dir_data }}"
   log_level: INFO
-  enable_syslog: true
+  server: true
+  bootstrap_expect: "{{ consul_servers | length }}"
+  ui: true
+  client_addr: 0.0.0.0
+  retry_join: "{{ consul_servers }}"
+  enable_syslog: "{{ consul_syslog_enabled }}"
   leave_on_terminate: true
   telemetry:
     prometheus_retention_time: 24h
