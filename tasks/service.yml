@@ -12,3 +12,5 @@
     name: consul
     state: "{{ consul_systemd_state }}"
     enabled: "{{ consul_systemd_enabled }}"
+    daemon_reload: "{{ consul_systemd_daemon_reload }}"
+

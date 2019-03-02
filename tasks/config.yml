@@ -1,25 +1,9 @@
 ---
-- block:
-  - name: generate local tmp file from template
-    local_action:
-      module: template
-      src: config.json.j2
-      dest: /tmp/consul_config.json
-    changed_when: False
-
-  - name: copy consul configuration file
-    copy:
-      src: /tmp/consul_config.json
-      dest: "{{ consul_dir_config }}/config.json"
-      owner: "{{ consul_user }}"
-      group: "{{ consul_group }}"
-      mode: 0600
-    notify: consul reload
-
-  always:
-  - name: remove tmp file
-    local_action:
-      module: file
-      state: absent
-      path: /tmp/consul_configs.json
-    changed_when: False
+- name: copy consul configuration file
+  copy:
+    dest: "{{ consul_dir_config }}/config.json"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0600
+    content: "{{ lookup('template', 'templates/config.json.j2') | to_nice_json }}"
+  notify: consul reload

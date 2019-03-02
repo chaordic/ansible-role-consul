@@ -8,5 +8,6 @@
   with_items:
     - "{{ consul_dir_bin }}"
     - "{{ consul_dir_config }}"
+    - "{{ consul_dir_configd }}"
     - "{{ consul_dir_data }}"
     - "{{ consul_dir_run }}"

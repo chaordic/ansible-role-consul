@@ -7,13 +7,11 @@ After=network-online.target
 [Service]
 User={{ consul_user }}
 Group={{ consul_group }}
-RuntimeDirectory={{ consul_dir_run }}
-RuntimeDirectoryMode=0775
 PIDFile={{ consul_dir_run }}/consul.pid
 PermissionsStartOnly=true
 ExecStart={{ consul_dir_bin }}/consul agent \
     -config-file={{ consul_dir_config }}/config.json \
-    -config-dir={{ consul_dir_config }} \
+    -config-dir={{ consul_dir_configd }} \
     -pid-file={{ consul_dir_run }}/consul.pid
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStopPost=/bin/rm -f {{ consul_dir_run }}/consul.pid
