@@ -1,5 +1,5 @@
 ---
-- name: " {{ consul_role }} | create directories"
+- name: "{{ consul_role }} | create directories"
   file:
     path: "{{ item }}"
     state: directory

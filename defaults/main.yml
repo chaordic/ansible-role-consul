@@ -19,7 +19,6 @@ consul_bin_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/cons
 # systemd
 consul_systemd_state: started
 consul_systemd_enabled: true
-consul_systemd_daemon_reload: true
 
 # configuration
 ## node
@@ -39,9 +38,21 @@ consul_ui: true
 consul_bootstrap_expect: "{{ consul_bootstrap_servers | length }}"
 consul_bootstrap_servers:
   - localhost
+## DNS
+consul_recursors: []
+## ports
+consul_ports_rpc: 8400
+consul_ports_dns: 8600
+consul_ports_http: 8500
+consul_ports_https: -1
+consul_ports_serf_lan: 8301
+consul_ports_serf_wan: 8302
+consul_ports_server: 8300
+consul_ports_grpc: -1
+
 
 # Consul Backinator
+consul_backup_enabled: false
 consul_backup_version: 1.6.5
 consul_backup_url: "https://github.com/myENA/consul-backinator/releases/download/v{{ consul_backup_version }}/consul-backinator-{{ consul_backup_version }}-amd64-linux.tar.gz"
 consul_backup_hour: 0
-consul_backup_enabled: false

@@ -1,7 +1,7 @@
 ---
-- name: "{{ consul_role }} | add systemd service""
+- name: "{{ consul_role }} | copy systemd unit file"
   template:
-    src: "consul-service.j2"
+    src: "consul-systemd.j2"
     dest: "/etc/systemd/system/consul-{{ consul_role }}.service"
     owner: root
     group: root
@@ -12,4 +12,3 @@
     name: "consul-{{ consul_role }}"
     state: "{{ consul_systemd_state }}"
     enabled: "{{ consul_systemd_enabled }}"
-    daemon_reload: "{{ consul_systemd_daemon_reload }}"

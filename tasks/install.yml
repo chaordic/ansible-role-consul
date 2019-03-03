@@ -1,12 +1,12 @@
 ---
-- name: "{{ consul_role }}" | install dependencies"
+- name: "{{ consul_role }} | install dependencies"
   package:
     name: "{{ consul_dependencies }}"
     state: present
 
 - name: "{{ consul_role }} | check if consul is installed"
   stat:
-    path: "{{ consul_dir_run }}/consul"
+    path: "{{ consul_dir_run }}/consul-{{ consul_role }}"
   register: install_result
 
 - name: "{{ consul_role }} | download binary"

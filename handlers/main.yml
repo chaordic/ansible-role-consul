@@ -1,16 +1,15 @@
 ---
 - name: consul start
   service:
-    name: consul
+    name: "consul-{{ consul_role }}"
     state: started
 
 - name: consul restart
   service:
-    name: consul
+    name: "consul-{{ consul_role }}"
     state: restarted
 
 - name: consul reload
   service:
-    name: consul
+    name: "consul-{{ consul_role }}"
     state: reloaded
-

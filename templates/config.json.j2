@@ -1,0 +1,52 @@
+{
+    {## Node ##}
+    "datacenter": "{{ consul_datacenter }}",
+    "domain": "{{ consul_domain }}",
+
+    {## Agent ##}
+    "data_dir": "{{ consul_data_dir }}",
+    "log_level": "{{ consul_log_level }}",
+    "enable_syslog": {{ consul_enable_syslog | bool | to_json }},
+
+    {## Server ##}
+    {% if consul_role == 'server' %}
+    "server": true,
+    {% else %}
+    "server": false,
+    {% endif %}
+
+    {## Client ##}
+    "client_addr": "{{ consul_client_addr }}",
+    "ui": {{ consul_ui | bool | to_json }},
+
+    {## Telemetry ##}
+    "telemetry": {
+        "prometheus_retention_time": "{{ consul_prometheus_retention_time }}"
+    },
+
+    {## Auto Join ##}
+    "bootstrap_expect": {{ consul_bootstrap_expect | int }},
+    "retry_join":
+    {{ consul_bootstrap_servers | to_json }},
+
+    {## DNS ##}
+    {% if consul_recursors | length > 0 %}
+        "recursors": {{ consul_recursors | to_json }},
+    {% endif %}
+
+    {## Ports Used ##}
+    "ports": {
+        {% if consul_version is version_compare('0.8.0', '<') %}
+        "rpc": {{ consul_ports_rpc}},
+        {% endif %}
+        "dns": {{ consul_ports_dns }},
+        "http": {{ consul_ports_http }},
+        "https": {{ consul_ports_https }},
+        "serf_lan": {{ consul_ports_serf_lan }},
+        "serf_wan": {{ consul_ports_serf_wan }},
+        "server": {{ consul_ports_server }},
+        {% if consul_version is version_compare('1.3.0', '>=') %}
+        "grpc": {{ consul_ports_grpc }}
+        {% endif %}
+    },
+}
