@@ -1,10 +1,10 @@
 ---
-- name: create group
+- name: "{{ consul_role }} | create group"
   group:
     name: "{{ consul_group }}"
     state: present
 
-- name: create user
+- name: "{{ consul_role }} | create user"
   user:
     name: "{{ consul_user }}"
     group: "{{ consul_group }}"

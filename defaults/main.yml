@@ -1,5 +1,6 @@
 ---
-# Consul
+consul_role: server # it could assume server or client role
+
 consul_user: consul
 consul_group: consul
 

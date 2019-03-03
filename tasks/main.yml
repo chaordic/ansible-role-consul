@@ -17,5 +17,7 @@
   tags: consul-config
 
 - include: backup.yml
+  when:
+    - consul_role == 'server'
+    - consul_backup_enabled
   tags: consul-backup
-  when: consul_backup_enabled

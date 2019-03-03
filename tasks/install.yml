@@ -1,15 +1,15 @@
 ---
-- name: install dependencies
+- name: "{{ consul_role }}" | install dependencies"
   package:
     name: "{{ consul_dependencies }}"
     state: present
 
-- name: check if consul is installed
+- name: "{{ consul_role }} | check if consul is installed"
   stat:
     path: "{{ consul_dir_run }}/consul"
   register: install_result
 
-- name: download binary
+- name: "{{ consul_role }} | download binary"
   unarchive:
     src: "{{ consul_bin_url }}"
     dest: "{{ consul_dir_bin }}"

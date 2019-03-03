@@ -1,9 +1,9 @@
 ---
-- name: copy consul configuration file
+- name: "{{ consul_role }} | copy consul configuration file"
   copy:
     dest: "{{ consul_dir_config }}/config.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0600
-    content: "{{ lookup('template', 'templates/config.json.j2') | to_nice_json }}"
+    content: "{{ lookup('template', 'templates/config-server.json.j2') | to_nice_json }}"
   notify: consul reload
