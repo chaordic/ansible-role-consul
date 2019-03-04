@@ -16,34 +16,3 @@
     remote_src: true
     mode: 0755
   when: install_result.stat.exists == False
-
-- block:
-  - name: "{{ consul_role }} | copy systemd unit file"
-    template:
-      src: systemd-service.j2
-      dest: "/etc/systemd/system/consul-{{ consul_role }}.service"
-      owner: root
-      group: root
-      mode: 0644
-    register: systemd_unit
-  when: ansible_service_mgr == "systemd"
-
-- name: "{{ consul_role }} | copy init.d script file"
-  template:
-    src: initd-service.j2
-    dest: "/etc/init.d/consul-{{ consul_role }}"
-    owner: root
-    group: root
-    mode: 0755
-  when: not ansible_service_mgr == "systemd"
-
-- name: "{{ consul_role }} | enable service"
-  service:
-    name: "consul-{{ consul_role }}"
-    state: started
-    enabled: true
-
-- name: "{{ consul_role }} | reload systemd unit"
-  systemd:
-    daemon_reload: true
-  when: ansible_service_mgr == "systemd" and systemd_unit is changed

@@ -11,6 +11,9 @@
 - include: install.yml
   tags: consul-install
 
+- include: init.yml
+  tags: consul-init
+
 - include: services.yml
   when: consul_services | length > 0
   tags: consul-services
