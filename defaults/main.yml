@@ -25,6 +25,7 @@ consul_domain: consul
 consul_data_dir: "{{ consul_dir_config }}"
 consul_log_level: INFO
 consul_enable_syslog: true
+consul_leave_on_terminate: false
 ## server
 consul_server: true
 ## auto join
