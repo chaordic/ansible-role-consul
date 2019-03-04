@@ -5,16 +5,15 @@
 - include: dirs.yml
   tags: consul-dirs
 
+- include: config.yml
+  tags: consul-config
+
 - include: install.yml
   tags: consul-install
 
-- include: service.yml
-  tags:
-  - consul-service
-  - consul-systemd
-
-- include: config.yml
-  tags: consul-config
+- include: services.yml
+  when: consul_services | length > 0
+  tags: consul-services
 
 - include: backup.yml
   when:
