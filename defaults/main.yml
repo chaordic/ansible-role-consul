@@ -27,10 +27,6 @@ consul_log_level: INFO
 consul_enable_syslog: true
 ## server
 consul_server: true
-## client
-consul_client_addr: 0.0.0.0
-consul_prometheus_retention_time: 0s
-consul_ui: true
 ## auto join
 consul_bootstrap_expect: "{{ consul_bootstrap_servers | length }}"
 consul_bootstrap_servers:
@@ -46,9 +42,43 @@ consul_ports_serf_lan: 8301
 consul_ports_serf_wan: 8302
 consul_ports_server: 8300
 consul_ports_grpc: -1
+## client
+## addresses
+consul_client_addr: 0.0.0.0
+consul_addresses_rpc: "{{ consul_client_addr }}"
+consul_addresses_dns: "{{ consul_client_addr }}"
+consul_addresses_http: "{{ consul_client_addr }}"
+consul_addresses_https: "{{ consul_client_addr }}"
+consul_addresses_grpc: "{{ consul_client_addr }}"
+# telemetry
+consul_prometheus_retention_time: 0s
+# ui
+consul_ui: true
 
 # services
 consul_services: []
+
+## DNS
+consul_delegate_datacenter_dns: false
+consul_dnsmasq_enable: false
+consul_dnsmasq_bind_interfaces: false
+consul_dnsmasq_consul_address: "\
+  {# Use localhost if DNS is listening on all interfaces #}\
+  {% if consul_addresses_dns == '0.0.0.0' %}\
+    127.0.0.1\
+  {% else %}\
+    {{ consul_addresses_dns }}\
+  {% endif %}"
+consul_dnsmasq_cache: -1
+consul_dnsmasq_servers:
+  - 8.8.8.8
+  - 8.8.4.4
+consul_dnsmasq_revservers: []
+consul_dnsmasq_no_poll: false
+consul_dnsmasq_no_resolv: false
+consul_dnsmasq_local_service: false
+consul_dnsmasq_listen_addresses: []
+consul_iptables_enable: false
 
 # Consul Backinator
 consul_backup_enabled: false

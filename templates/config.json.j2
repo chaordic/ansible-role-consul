@@ -17,10 +17,6 @@
     "server": false,
     {% endif %}
 
-    {## Client ##}
-    "client_addr": "{{ consul_client_addr }}",
-    "ui": {{ consul_ui | bool | to_json }},
-
     {## Telemetry ##}
     "telemetry": {
         "prometheus_retention_time": "{{ consul_prometheus_retention_time }}"
@@ -35,7 +31,21 @@
         "recursors": {{ consul_recursors | to_json }},
     {% endif %}
 
-    {## Ports Used ##}
+    {## Addresses ##}
+    "client_addr": "{{ consul_client_addr }}",
+    "addresses": {
+        {% if consul_version is version_compare('0.8.0', '<') %}
+        "rpc": "{{ consul_addresses_rpc }}",
+        {% endif %}
+        "dns": "{{ consul_addresses_dns }}",
+        "http": "{{ consul_addresses_http }}",
+        "https": "{{ consul_addresses_https }}",
+        {% if consul_version is version_compare('1.3.0', '>=') %}
+        "grpc": "{{ consul_addresses_grpc }}"
+        {% endif %}
+        },
+
+    {## Ports ##}
     "ports": {
         {% if consul_version is version_compare('0.8.0', '<') %}
         "rpc": {{ consul_ports_rpc}},
@@ -50,4 +60,8 @@
         "grpc": {{ consul_ports_grpc }}
         {% endif %}
     },
+
+    {## UI ##}
+
+    "ui": {{ consul_ui | bool | to_json }},
 }

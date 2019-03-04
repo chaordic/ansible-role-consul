@@ -18,6 +18,9 @@
   when: consul_services | length > 0
   tags: consul-services
 
+- include: dnsmasq.yml
+  tags: consul-dnsmasq
+
 - include: backup.yml
   when:
     - consul_role == 'server'

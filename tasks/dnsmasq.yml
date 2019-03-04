@@ -1,0 +1,19 @@
+---
+- name: "{{ consul_role }} | install dnsmasq"
+  package:
+    name: dnsmasq
+    state: present
+
+- name: "{{ consul_role }} | enable dnsmasq service"
+  service:
+    name: dnsmasq
+    enabled: true
+
+- name: "{{ consul_role }} | create dnsmasq config"
+  template:
+    src: dnsmasq-10-consul.j2
+    dest: /etc/dnsmasq.d/10-consul
+    owner: root
+    group: root
+    mode: 0644
+  notify: dnsmasq restart

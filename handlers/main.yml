@@ -13,3 +13,8 @@
   service:
     name: "consul-{{ consul_role }}"
     state: reloaded
+
+- name: dnsmasq restart
+  service:
+    name: dnsmasq
+    state: restarted
