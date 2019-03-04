@@ -1,13 +1,34 @@
 ---
-- name: "{{ consul_role }} | configure consul services"
-  template:
-    dest: "{{ consul_dir_configd }}/service_{{ item.name }}.json"
-    src: service.json.j2
-    owner: "{{ consul_user }}"
-    group: "{{ consul_group }}"
-    mode: 0644
-  with_items: "{{ consul_services }}"
-  notify: consul reload
+- block:
+  - name: "{{ consul_role }} | validate | copy consul configd to /tmp"
+    shell: "cp -r {{ consul_dir_configd }} /tmp/consul.d"
+    changed_when: False
+    check_mode: False
+
+  - name: "{{ consul_role }} | validate | copy consul services to /tmp"
+    template:
+      dest: "/tmp/consul.d/service_{{ item.name }}.json"
+      src: service.json.j2
+      owner: "{{ consul_user }}"
+      group: "{{ consul_group }}"
+      mode: 0644
+    with_items: "{{ consul_services }}"
+    changed_when: False
+    check_mode: False
+
+  - name: "{{ consul_role }} | validate | validating services"
+    command: "{{ consul_dir_bin }}/consul validate /tmp/consul.d"
+    register: validate_result
+    failed_when: validate_result.rc == 1
+    changed_when: False
+    check_mode: False
+  always:
+  - name: "{{ consul_role }} | validate | clean tmp files"
+    file:
+      state: absent
+      path: /tmp/consul.d
+    changed_when: False
+    check_mode: False
 
 - name: "{{ consul_role }} | Get the list of services config file"
   find:
@@ -32,4 +53,4 @@
     state: absent
   when: item not in managed_files
   with_items: "{{ list_current_service_config }}"
-  notify: consul reload
+  notify: consul restart
