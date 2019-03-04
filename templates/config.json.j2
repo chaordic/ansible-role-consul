@@ -1,5 +1,6 @@
 {
     {## Node ##}
+    "node_name": "{{ consul_node_name }}",
     "datacenter": "{{ consul_datacenter }}",
     "domain": "{{ consul_domain }}",
 
@@ -11,6 +12,7 @@
     {## Server ##}
     {% if consul_role == 'server' %}
     "server": true,
+    "bootstrap_expect": {{ consul_bootstrap_expect | int }},
     {% else %}
     "server": false,
     {% endif %}
@@ -25,7 +27,6 @@
     },
 
     {## Auto Join ##}
-    "bootstrap_expect": {{ consul_bootstrap_expect | int }},
     "retry_join":
     {{ consul_bootstrap_servers | to_json }},
 
