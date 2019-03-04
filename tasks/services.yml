@@ -19,7 +19,7 @@
   - name: "{{ consul_role }} | validate | validating services"
     command: "{{ consul_dir_bin }}/consul validate /tmp/consul.d"
     register: validate_result
-    failed_when: validate_result.rc == 1
+    failed_when: "'Config validation failed: data_dir cannot be empty' not in validate_result.stderr"
     changed_when: False
     check_mode: False
   always:
@@ -29,6 +29,16 @@
       path: /tmp/consul.d
     changed_when: False
     check_mode: False
+
+- name: "{{ consul_role }} | configure consul services"
+  template:
+    dest: "{{ consul_dir_configd }}/service_{{ item.name }}.json"
+    src: service.json.j2
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0644
+  with_items: "{{ consul_services }}"
+  notify: consul restart
 
 - name: "{{ consul_role }} | Get the list of services config file"
   find:
