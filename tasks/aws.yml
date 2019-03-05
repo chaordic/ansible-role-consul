@@ -14,7 +14,7 @@
 
 - name: "{{ consul_role }} | copy consul-aws systemd unit file"
   template:
-    src: aws-systemd-service.j2
+    src: init/consul-aws-systemd.j2
     dest: /etc/systemd/system/consul-aws.service
     owner: root
     group: root

@@ -11,7 +11,7 @@
       owner: "{{ consul_user }}"
       group: "{{ consul_group }}"
       mode: 0600
-      content: "{{ lookup('template', 'templates/config.json.j2') | to_nice_json }}"
+      content: "{{ lookup('template', 'templates/consul/config.json.j2') | to_nice_json }}"
     changed_when: False
     check_mode: False
 
@@ -35,5 +35,5 @@
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0600
-    content: "{{ lookup('template', 'templates/config.json.j2') | to_nice_json }}"
+    content: "{{ lookup('template', 'templates/consul/config.json.j2') | to_nice_json }}"
   notify: consul reload

@@ -8,7 +8,7 @@
   - name: "{{ consul_role }} | validate | copy consul services to /tmp"
     template:
       dest: "/tmp/consul.d/service_{{ item.name }}.json"
-      src: service.json.j2
+      src: consul/service.json.j2
       owner: "{{ consul_user }}"
       group: "{{ consul_group }}"
       mode: 0644
@@ -33,7 +33,7 @@
 - name: "{{ consul_role }} | configure consul services"
   template:
     dest: "{{ consul_dir_configd }}/service_{{ item.name }}.json"
-    src: service.json.j2
+    src: consul/service.json.j2
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0644
