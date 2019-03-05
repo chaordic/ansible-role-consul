@@ -41,6 +41,6 @@ bind-interfaces
 {% endfor -%}
 
 {# Cache size -#}
-{% if consul_dnsmasq_cache > 0 -%}
+{% if consul_dnsmasq_cache is defined -%}
     cache-size={{ consul_dnsmasq_cache }}
 {% endif -%}
