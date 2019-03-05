@@ -9,7 +9,7 @@
     path: "{{ consul_dir_bin }}/consul"
   register: install_result
 
-- name: "{{ consul_role }} | download binary"
+- name: "{{ consul_role }} | download consul binary"
   unarchive:
     src: "{{ consul_bin_url }}"
     dest: "{{ consul_dir_bin }}"

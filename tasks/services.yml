@@ -16,7 +16,7 @@
     changed_when: False
     check_mode: False
 
-  - name: "{{ consul_role }} | validate | validating services"
+  - name: "{{ consul_role }} | validate | validating consul services"
     command: "{{ consul_dir_bin }}/consul validate /tmp/consul.d"
     register: validate_result
     failed_when: "'Config validation failed: data_dir cannot be empty' not in validate_result.stderr"
@@ -40,7 +40,7 @@
   with_items: "{{ consul_services }}"
   notify: consul reload
 
-- name: "{{ consul_role }} | Get the list of services config file"
+- name: "{{ consul_role }} | get the list of services config file"
   find:
     paths: "{{ consul_dir_configd }}"
     file_type: file

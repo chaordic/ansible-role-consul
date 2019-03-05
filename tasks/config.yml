@@ -15,7 +15,7 @@
     changed_when: False
     check_mode: False
 
-  - name: "{{ consul_role }} | validate | validating config file"
+  - name: "{{ consul_role }} | validate | validating consul config file"
     command: "{{ consul_dir_bin }}/consul validate /tmp/consul"
     register: validate_result
     failed_when: validate_result.rc == 1

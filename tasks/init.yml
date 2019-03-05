@@ -1,5 +1,5 @@
 ---
-- name: "{{ consul_role }} | copy systemd unit file"
+- name: "{{ consul_role }} | copy consul systemd file"
   template:
     src: init/consul-systemd.j2
     dest: "/etc/systemd/system/consul-{{ consul_role }}.service"
@@ -9,7 +9,7 @@
   register: systemd_unit
   when: ansible_service_mgr == "systemd"
 
-- name: "{{ consul_role }} | copy init.d script file"
+- name: "{{ consul_role }} | copy consul init.d file"
   template:
     src: initd-service.j2
     dest: "/etc/init.d/consul-{{ consul_role }}"
@@ -18,13 +18,15 @@
     mode: 0755
   when: not ansible_service_mgr == "systemd"
 
-- name: "{{ consul_role }} | enable service"
+- name: "{{ consul_role }} | enable consul service"
   service:
     name: "consul-{{ consul_role }}"
     state: started
     enabled: true
 
-- name: "{{ consul_role }} | reload systemd unit"
+- name: "{{ consul_role }} | reload consul systemd unit"
   systemd:
     daemon_reload: true
-  when: ansible_service_mgr == "systemd" and systemd_unit is changed
+  when:
+    - ansible_service_mgr == "systemd"
+    - systemd_unit.changed
