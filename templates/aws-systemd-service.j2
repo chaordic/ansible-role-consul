@@ -1,0 +1,31 @@
+[Unit]
+Description="HashiCorp Consul-AWS - Sync the services in an AWS CloudMap namespace to a Consul datacenter."
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+User={{ consul_user }}
+Group={{ consul_group }}
+PIDFile={{ consul_dir_run }}/consul-aws.pid
+PermissionsStartOnly=true
+ExecStartPre=-/bin/mkdir -p {{ consul_dir_run }}
+ExecStartPre=/bin/chown -R {{ consul_user }}:{{ consul_group }} {{ consul_dir_run }}
+ExecStart={{ consul_dir_bin }}/consul-aws sync-catalog \
+    -aws-namespace-id {{ consul_aws_namespace_id }} \
+{% if consul_aws_prefix|length > 0 %}
+    -{{ 'aws' if consul_aws_direction == 'consul' else 'consul' }}-service-prefix {{ consul_aws_prefix }} \
+{% endif %}
+    -aws-pull-interval {{ consul_aws_pull_interval }} \
+    -aws-dns-ttl {{ consul_aws_dns_ttl }} \
+    -to-{{ consul_aws_direction }}
+ExecStopPost=/bin/rm -f {{ consul_dir_run }}/consul-aws.pid
+KillMode=process
+KillSignal=SIGTERM
+Restart=on-failure
+RestartSec=40s
+LimitNOFILE=65536
+Environment=AWS_REGION={{ consul_aws_region }}
+
+[Install]
+WantedBy=multi-user.target

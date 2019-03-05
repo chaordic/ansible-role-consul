@@ -81,6 +81,19 @@ consul_dnsmasq_local_service: false
 consul_dnsmasq_listen_addresses: []
 consul_iptables_enable: false
 
+# consul-aws
+## download
+consul_aws_enabled: false
+consul_aws_version: 0.1.1
+consul_aws_url: "https://releases.hashicorp.com/consul-aws/{{ consul_aws_version }}/consul-aws_{{ consul_aws_version }}_linux_amd64.zip"
+## config
+consul_aws_region: us-east-1
+consul_aws_direction: aws
+consul_aws_prefix: _consul
+consul_aws_pull_interval: 30
+consul_aws_dns_ttl: 60
+
+# TODO: refactor it
 # Consul Backinator
 consul_backup_enabled: false
 consul_backup_version: 1.6.5

@@ -21,6 +21,12 @@
 - include: dnsmasq.yml
   tags: consul-dnsmasq
 
+- include: aws.yml
+  when:
+    - consul_role == 'server'
+    - consul_aws_enabled
+  tags: consul-aws
+
 - include: backup.yml
   when:
     - consul_role == 'server'
