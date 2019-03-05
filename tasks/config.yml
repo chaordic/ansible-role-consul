@@ -36,5 +36,4 @@
     group: "{{ consul_group }}"
     mode: 0600
     content: "{{ lookup('template', 'templates/config.json.j2') | to_nice_json }}"
-  when: validate_result.rc == 0
   notify: consul reload

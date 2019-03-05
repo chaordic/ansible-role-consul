@@ -35,7 +35,10 @@ do_start_cmd()
 {
   do_start_prepare
   echo -n "Starting daemon: "$NAME
-  start-stop-daemon --background --start --pidfile $PIDFILE --exec $DAEMON --user $USER --name consul --chuid $USER -- $DAEMON_ARGS
+  start-stop-daemon --background --quiet --start --pidfile $PIDFILE --exec $DAEMON --user $USER --name consul --chuid $USER -- $DAEMON_ARGS
+  if [ $? != 0 ]; then
+    start-stop-daemon --start --pidfile $PIDFILE --exec $DAEMON --user $USER --name consul --chuid $USER -- $DAEMON_ARGS
+  fi
   echo "."
 }
 
