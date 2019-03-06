@@ -1,20 +1,25 @@
 ---
-- name: consul start
+- name: start consul
   service:
     name: "consul-{{ consul_role }}"
     state: started
 
-- name: consul restart
+- name: restart consul
   service:
     name: "consul-{{ consul_role }}"
     state: restarted
 
-- name: consul reload
+- name: reload consul
   service:
     name: "consul-{{ consul_role }}"
     state: reloaded
 
-- name: dnsmasq restart
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+
+- name: restart dnsmasq
   service:
     name: dnsmasq
     state: restarted
