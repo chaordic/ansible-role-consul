@@ -36,7 +36,7 @@ consul_enable_syslog: false
 consul_syslog_facility: local0
 consul_leave_on_terminate: false
 ## server
-consul_server: true
+consul_server: "{{ consul_role }}"
 ## auto join
 consul_bootstrap_expect: "{{ consul_bootstrap_servers | length }}"
 consul_bootstrap_servers:
