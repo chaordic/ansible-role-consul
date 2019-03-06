@@ -7,16 +7,24 @@ consul_group: consul
 consul_dependencies:
   - unzip
 
+consul_version: 1.4.2
+consul_bin_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
+
+# directories
 consul_dir_bin: /usr/bin
 consul_dir_config: /etc/consul
 consul_dir_configd: /etc/consul/consul.d
 consul_dir_data: /var/consul
 consul_dir_run: /run/consul
+consul_dir_log: /var/log/consul
 
-consul_version: 1.4.2
-consul_bin_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
+# logging
+consul_syslog_user: syslog
+consul_syslog_group: syslog
+consul_log_file: "consul-{{ consul_role }}.log"
+consul_log_rotate: 2
 
-# configuration
+# consul configuration
 ## node
 consul_node_name: "{{ ansible_hostname }}"
 consul_datacenter: dc1
@@ -24,7 +32,8 @@ consul_domain: consul
 ## agent
 consul_data_dir: "{{ consul_dir_config }}"
 consul_log_level: INFO
-consul_enable_syslog: true
+consul_enable_syslog: false
+consul_syslog_facility: local0
 consul_leave_on_terminate: false
 ## server
 consul_server: true
@@ -43,7 +52,6 @@ consul_ports_serf_lan: 8301
 consul_ports_serf_wan: 8302
 consul_ports_server: 8300
 consul_ports_grpc: -1
-## client
 ## addresses
 consul_client_addr: 0.0.0.0
 consul_addresses_rpc: "{{ consul_client_addr }}"

@@ -8,6 +8,7 @@
     "data_dir": "{{ consul_data_dir }}",
     "log_level": "{{ consul_log_level }}",
     "enable_syslog": {{ consul_enable_syslog | bool | to_json }},
+    "syslog_facility": "{{ consul_syslog_facility }}",
     "leave_on_terminate": {{ consul_leave_on_terminate | bool | to_json }},
 
     {## Server ##}
@@ -63,6 +64,5 @@
     },
 
     {## UI ##}
-
     "ui": {{ consul_ui | bool | to_json }},
 }

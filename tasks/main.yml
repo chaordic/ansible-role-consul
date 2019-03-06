@@ -18,6 +18,10 @@
   when: consul_services | length > 0
   tags: consul-services
 
+- include: syslog.yml
+  when: consul_enable_syslog
+  tags: consul-syslog
+
 - include: dnsmasq.yml
   tags: consul-dnsmasq
 
