@@ -38,7 +38,7 @@
     group: "{{ consul_group }}"
     mode: 0644
   with_items: "{{ consul_services }}"
-  notify: consul reload
+  notify: reload consul
 
 - name: "{{ consul_role }} | get the list of services config file"
   find:

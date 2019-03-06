@@ -7,13 +7,14 @@
 - name: "{{ consul_role }} | enable dnsmasq service"
   service:
     name: dnsmasq
+    state: started
     enabled: true
 
 - name: "{{ consul_role }} | create dnsmasq config"
   template:
-    src: dnsmasq/10-consul.j2
-    dest: /etc/dnsmasq.d/10-consul
+    src: dnsmasq/00-consul.j2
+    dest: /etc/dnsmasq.d/00-consul
     owner: root
     group: root
     mode: 0644
-  notify: dnsmasq restart
+  notify: restart dnsmasq
