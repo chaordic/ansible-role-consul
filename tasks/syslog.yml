@@ -1,19 +1,29 @@
 ---
-- name: "{{ consul_role }} | Create rsyslog config"
+- name: "{{ consul_role }} | ensure rsyslog, logrotate and dependencies are installed"
+  package:
+    name: "{{ item }}"
+    state: 'present'
+  with_items:
+    - rsyslog
+    - logrotate
+    - cron
+
+- name: "{{ consul_role }} | create rsyslog config"
   template:
     src: rsyslog/00-consul.conf.j2
     dest: /etc/rsyslog.d/00-consul.conf
-    owner: "{{ consul_syslog_user }}"
-    group: "{{ consul_syslog_group }}"
-    mode: 0444
+    owner: root
+    group: root
+    mode: 0644
   notify:
     - restart rsyslog
     - reload consul
 
-- name: "{{ consul_role }} | Create logrotate config"
+- name: "{{ consul_role }} | create logrotate config"
   template:
     src: logrotate/consul.j2
     dest: /etc/logrotate.d/consul
-    owner: "{{ consul_syslog_user }}"
-    group: "{{ consul_syslog_group }}"
-    mode: 0444
+    owner: root
+    group: root
+    mode: 0644
+  tags: consul-logrotate
