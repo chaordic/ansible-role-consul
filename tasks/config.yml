@@ -1,11 +1,13 @@
 ---
 - block:
-  - name: "{{ consul_role }} | validate | copy consul config to /tmp"
-    shell: "cp -r {{ consul_dir_config }} /tmp/consul"
+  - name: "{{ consul_role }} | validate | create /tmp/consul directory"
+    file:
+      path: /tmp/consul
+      state: directory
     changed_when: False
     check_mode: False
 
-  - name: "{{ consul_role }} | copy config file to /tmp"
+  - name: "{{ consul_role }} | validate | copy config file to /tmp"
     copy:
       dest: /tmp/consul/config.json
       owner: "{{ consul_user }}"
@@ -21,13 +23,14 @@
     failed_when: validate_result.rc == 1
     changed_when: False
     check_mode: False
+
   always:
-  - name: "{{ consul_role }} | validate | clean tmp files"
+  - name: "{{ consul_role }} | validate | clean /tmp/consul directory"
     file:
       state: absent
       path: /tmp/consul
-    changed_when: False
     check_mode: False
+    changed_when: False
 
 - name: "{{ consul_role }} | parse template to consul config file"
   copy:
