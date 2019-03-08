@@ -1,7 +1,9 @@
 ---
 - block:
-  - name: "{{ consul_role }} | validate | copy consul configd to /tmp"
-    shell: "cp -r {{ consul_dir_configd }} /tmp/consul.d"
+  - name: "{{ consul_role }} | validate | create /tmp/consul.d directory"
+    file:
+      path: /tmp/consul.d
+      state: directory
     changed_when: False
     check_mode: False
 
@@ -22,6 +24,7 @@
     failed_when: "'Config validation failed: data_dir cannot be empty' not in validate_result.stderr"
     changed_when: False
     check_mode: False
+
   always:
   - name: "{{ consul_role }} | validate | clean tmp files"
     file:
