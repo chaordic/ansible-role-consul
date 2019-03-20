@@ -7,7 +7,7 @@ consul_group: consul
 consul_dependencies:
   - unzip
 
-consul_init_enabled: true
+consul_init_enable: true
 
 consul_version: 1.4.2
 consul_bin_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
@@ -92,7 +92,7 @@ consul_dnsmasq_listen_addresses: []
 
 # consul-aws
 ## download
-consul_aws_enabled: false
+consul_aws_enable: false
 consul_aws_version: 0.1.1
 consul_aws_url: "https://releases.hashicorp.com/consul-aws/{{ consul_aws_version }}/consul-aws_{{ consul_aws_version }}_linux_amd64.zip"
 ## config
@@ -103,7 +103,7 @@ consul_aws_pull_interval: 30
 consul_aws_dns_ttl: 60
 
 # consul backup
-consul_backup_enabled: false
+consul_backup_enable: false
 consul_backup_version: 1.6.5
 consul_backup_url: "https://github.com/myENA/consul-backinator/releases/download/v{{ consul_backup_version }}/consul-backinator-{{ consul_backup_version }}-amd64-linux.tar.gz"
 consul_backup_hour: 0

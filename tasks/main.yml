@@ -24,15 +24,16 @@
 
 - include: dnsmasq.yml
   tags: consul-dnsmasq
+  when: consul_dnsmasq_enable
 
 - include: aws.yml
   when:
     - consul_role == 'server'
-    - consul_aws_enabled
+    - consul_aws_enable
   tags: consul-aws
 
 - include: backup.yml
   when:
     - consul_role == 'server'
-    - consul_backup_enabled
+    - consul_backup_enable
   tags: consul-backup

@@ -23,7 +23,7 @@
     name: "consul-{{ consul_role }}"
     state: started
     enabled: true
-  when: consul_init_enabled
+  when: consul_init_enable
 
 - name: "{{ consul_role }} | reload consul systemd unit"
   systemd:
