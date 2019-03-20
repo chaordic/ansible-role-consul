@@ -16,7 +16,7 @@ ExecStart={{ consul_dir_bin }}/consul-aws sync-catalog \
 {% if consul_aws_prefix|length > 0 %}
     -{{ 'aws' if consul_aws_direction == 'consul' else 'consul' }}-service-prefix {{ consul_aws_prefix }} \
 {% endif %}
-    -aws-pull-interval {{ consul_aws_pull_interval }} \
+    -aws-poll-interval {{ consul_aws_poll_interval }} \
     -aws-dns-ttl {{ consul_aws_dns_ttl }} \
     -to-{{ consul_aws_direction }}
 ExecStopPost=/bin/rm -f {{ consul_dir_run }}/consul-aws.pid

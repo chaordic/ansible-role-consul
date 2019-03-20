@@ -99,7 +99,7 @@ consul_aws_url: "https://releases.hashicorp.com/consul-aws/{{ consul_aws_version
 consul_aws_region: us-east-1
 consul_aws_direction: aws
 consul_aws_prefix: _consul
-consul_aws_pull_interval: 30
+consul_aws_poll_interval: 30s
 consul_aws_dns_ttl: 60
 
 # consul backup
