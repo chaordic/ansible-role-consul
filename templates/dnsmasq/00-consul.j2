@@ -5,6 +5,11 @@ server=/{{ consul_datacenter }}.{{ consul_domain }}/{{ consul_dnsmasq_consul_add
 server=/{{ consul_domain }}/{{ consul_dnsmasq_consul_address }}#{{ consul_ports_dns }}
 {% endif -%}
 
+{# Upstream DNS servers -#}
+{% for server in consul_dnsmasq_servers -%}
+    server={{ server }}
+{% endfor -%}
+
 {# Only bind to specific interfaces -#}
 {% if consul_dnsmasq_bind_interfaces -%}
 bind-interfaces
@@ -30,11 +35,6 @@ bind-interfaces
     no-resolv
 {% endif -%}
 
-{# Upstream DNS servers -#}
-{% for server in consul_dnsmasq_servers -%}
-    server={{ server }}
-{% endfor -%}
-
 {# Custom listen addresses -#}
 {% for address in consul_dnsmasq_listen_addresses -%}
     listen-address={{ address }}
@@ -43,4 +43,9 @@ bind-interfaces
 {# Cache size -#}
 {% if consul_dnsmasq_cache is defined -%}
     cache-size={{ consul_dnsmasq_cache }}
+{% endif -%}
+
+{# Query every upstream dns server until get a response -#}
+{% if consul_dnsmasq_strict_order -%}
+    strict-order
 {% endif -%}

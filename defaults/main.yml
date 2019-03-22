@@ -70,8 +70,8 @@ consul_ui: true
 consul_services: []
 
 ## DNS
-consul_delegate_datacenter_dns: false
 consul_dnsmasq_enable: false
+consul_delegate_datacenter_dns: false
 consul_dnsmasq_bind_interfaces: false
 consul_dnsmasq_consul_address: "\
   {# Use localhost if DNS is listening on all interfaces #}\
@@ -81,6 +81,7 @@ consul_dnsmasq_consul_address: "\
     {{ consul_addresses_dns }}\
   {% endif %}"
 consul_dnsmasq_cache: 0
+consul_dnsmasq_strict_order: true
 consul_dnsmasq_servers:
   - 8.8.8.8
   - 8.8.4.4
