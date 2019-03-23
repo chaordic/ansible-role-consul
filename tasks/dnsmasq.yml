@@ -4,6 +4,12 @@
     name: dnsmasq
     state: present
 
+- name: "{{ consul_role }} | get dnsmasq version"
+  shell: dnsmasq --version | head -n 1 | awk '{ print $ 3}'
+  changed_when: False
+  check_mode: False
+  register: dnsmasq_version
+
 - name: "{{ consul_role }} | enable dnsmasq service"
   service:
     name: dnsmasq

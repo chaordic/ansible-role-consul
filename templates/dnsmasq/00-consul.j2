@@ -1,3 +1,20 @@
+{# Regression of server= order (2.69): https://www.mail-archive.com/dnsmasq-discuss@lists.thekelleys.org.uk/msg11692.html #}
+{% if dnsmasq_version.stdout | float >= 2.69 -%}
+
+{# Upstream DNS servers -#}
+{% for server in consul_dnsmasq_servers -%}
+    server={{ server }}
+{% endfor -%}
+
+{# Enable forward lookups for the consul domain with conditional delegation -#}
+{% if consul_delegate_datacenter_dns -%}
+server=/{{ consul_datacenter }}.{{ consul_domain }}/{{ consul_dnsmasq_consul_address }}#{{ consul_ports_dns }}
+{% else %}
+server=/{{ consul_domain }}/{{ consul_dnsmasq_consul_address }}#{{ consul_ports_dns }}
+{% endif -%}
+
+{% else %}
+
 {# Enable forward lookups for the consul domain with conditional delegation -#}
 {% if consul_delegate_datacenter_dns -%}
 server=/{{ consul_datacenter }}.{{ consul_domain }}/{{ consul_dnsmasq_consul_address }}#{{ consul_ports_dns }}
@@ -9,6 +26,8 @@ server=/{{ consul_domain }}/{{ consul_dnsmasq_consul_address }}#{{ consul_ports_
 {% for server in consul_dnsmasq_servers -%}
     server={{ server }}
 {% endfor -%}
+
+{% endif -%}
 
 {# Only bind to specific interfaces -#}
 {% if consul_dnsmasq_bind_interfaces -%}
