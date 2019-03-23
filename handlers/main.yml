@@ -23,3 +23,7 @@
   service:
     name: dnsmasq
     state: restarted
+
+- name: "demon-reload consul"
+  systemd:
+    daemon_reload: true
