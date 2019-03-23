@@ -22,8 +22,8 @@ ExecStart={{ consul_dir_bin }}/consul-aws sync-catalog \
 ExecStopPost=/bin/rm -f {{ consul_dir_run }}/consul-aws.pid
 KillMode=process
 KillSignal=SIGTERM
-Restart=on-failure
-RestartSec=40s
+Restart=always
+RestartSec=10s
 LimitNOFILE=65536
 Environment=AWS_REGION={{ consul_aws_region }}
 

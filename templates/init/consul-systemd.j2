@@ -19,8 +19,8 @@ ExecReload=/bin/kill -HUP $MAINPID
 ExecStopPost=/bin/rm -f {{ consul_dir_run }}/consul-{{ consul_role }}.pid
 KillMode=process
 KillSignal=SIGTERM
-Restart=on-failure
-RestartSec=40s
+Restart=always
+RestartSec=10s
 LimitNOFILE=65536
 
 [Install]
