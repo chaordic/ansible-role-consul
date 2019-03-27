@@ -8,6 +8,7 @@ consul_dependencies:
   - unzip
 
 consul_init_enable: true
+consul_init_start: true
 
 consul_version: 1.4.2
 consul_bin_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"

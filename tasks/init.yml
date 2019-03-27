@@ -19,16 +19,22 @@
     mode: 0755
   when: not ansible_service_mgr == "systemd"
 
-- name: "{{ consul_role }} | enable consul service"
-  service:
-    name: "consul-{{ consul_role }}"
-    state: started
-    enabled: true
-  when: consul_init_enable
-
 - name: "{{ consul_role }} | reload consul systemd unit"
   systemd:
     daemon_reload: true
   when:
     - ansible_service_mgr == "systemd"
     - systemd_unit.changed
+
+- name: "{{ consul_role }} | enable consul service"
+  service:
+    name: "consul-{{ consul_role }}"
+    state: stopped
+    enabled: true
+  when: consul_init_enable
+
+- name: "{{ consul_role }} | start consul service"
+  service:
+    name: "consul-{{ consul_role }}"
+    state: started
+  when: consul_init_start

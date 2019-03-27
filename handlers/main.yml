@@ -13,6 +13,7 @@
   service:
     name: "consul-{{ consul_role }}"
     state: reloaded
+  when: consul_init_start
 
 - name: restart rsyslog
   service:

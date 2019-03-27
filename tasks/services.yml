@@ -66,4 +66,4 @@
     state: absent
   when: item not in managed_files
   with_items: "{{ list_current_service_config }}"
-  notify: consul reload
+  notify: reload consul
