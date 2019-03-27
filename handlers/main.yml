@@ -24,6 +24,6 @@
     name: dnsmasq
     state: restarted
 
-- name: "demon-reload consul"
+- name: "daemon-reload consul"
   systemd:
     daemon_reload: true
