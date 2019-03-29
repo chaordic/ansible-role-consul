@@ -1,1 +1,1 @@
-{{ consul_syslog_facility }}.* {{ consul_dir_log }}/{{ consul_log_file }}
+if $syslogtag startswith 'consul' then {{ consul_dir_log }}/{{ consul_log_file }}
