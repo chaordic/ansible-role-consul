@@ -65,6 +65,11 @@
         {% endif %}
     },
 
+    {## DNS ##}
+    "dns_config": {
+        "only_passing": {{ consul_only_passing | bool | to_json }}
+    },
+
     {## UI ##}
     "ui": {{ consul_ui | bool | to_json }},
 }

@@ -45,6 +45,7 @@ consul_bootstrap_servers:
   - localhost
 ## DNS
 consul_recursors: []
+consul_only_passing: false
 ## ports
 consul_ports_rpc: 8400
 consul_ports_dns: 8600
