@@ -1,59 +1,46 @@
 # Ansible Role: Consul
-An ansible role to install and configure Consul agent, this role was customized to use Consul in AWS.
+Installs and configure [Consul](https://www.consul.io/) on Linux.
 
 ## Requirements
-- [Ansible >= 2.5](https://ansible.com/)
-- OS based on systemd
-
+- [Ansible >= 2.4](https://ansible.com/)
 
 ## Role Variables
 
 Please look at the [defaults/main.yml](defaults/main.yml) to see all default variables.
 
-```yml
----
-consul_config:
-  server: true
-  data_dir: "/var/consul"
-  ui: true
-```
-The mandatory variable is the `consul_config`, this dict is composed by [Consul options](https://www.consul.io/docs/agent/options.html).
-
-```yml
----
-consul_backup_config:
-  file: "/tmp/consul.bkp"
-```
-The mandatory variable is the `consul_backup_config`, this dict is composed by [Consul Backinator options](https://github.com/myENA/consul-backinator#backup-options).
+For a simple installation and configuration, there is no mandatory variable.
 
 ## Example Playbook
 
 ```yml
 ---
-- name: "Consul server"
-  hosts: servers
-  gather_facts: true
+- name: Consul server
+  hosts: all
   vars:
-    # Consul
-    consul_config:
-      server: true
-      datacenter: chaordic
-      data_dir: "{{ consul_data_dir }}"
-      bind_addr: "{{ ansible_default_ipv4.address }}"
-      ui: true
-      client_addr: "0.0.0.0"
+    consul_role: server
+    consul_version: 1.4.2
+    ## node
+    consul_domain: mydomain.consul
+    ## agent
+    consul_log_level: INFO
+    consul_enable_syslog: true
+    consul_leave_on_terminate: true
+    consul_ui: true
+    ## auto join
+    consul_bootstrap_servers:
+      - server1.domain.internal
+      - server2.domain.internal
 
-    # Consul Backup
-    consul_backup_enabled: true
-    consul_backup_hour: 12
-    consul_backup_config:
-      file: "/tmp/consul.bkp"
+    ## DNS
+    consul_dnsmasq_enable: true
+    consul_dnsmasq_servers:
+      - 8.8.8.8
+      - 8.8.4.4
 
   roles:
     - role: ansible-role-consul
       tags: consul
 ```
-
 
 ## Development
 

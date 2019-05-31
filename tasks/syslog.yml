@@ -1,0 +1,19 @@
+---
+- name: "{{ consul_role }} | create rsyslog config"
+  template:
+    src: rsyslog/00-consul.conf.j2
+    dest: /etc/rsyslog.d/00-consul.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart rsyslog
+
+- name: "{{ consul_role }} | create logrotate config"
+  template:
+    src: logrotate/consul.j2
+    dest: /etc/logrotate.d/consul
+    owner: root
+    group: root
+    mode: 0644
+  tags: consul-logrotate

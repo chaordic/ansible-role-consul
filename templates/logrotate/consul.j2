@@ -1,0 +1,9 @@
+{{ consul_dir_log }}/{{ consul_log_file }} {
+    daily
+    missingok
+    rotate {{ consul_log_rotate }}
+    compress
+    copytruncate
+    notifempty
+    create 600 {{ consul_user }} {{ consul_group }}
+}

@@ -1,0 +1,12 @@
+---
+- name: "{{ consul_role }} | create group"
+  group:
+    name: "{{ consul_group }}"
+    state: present
+
+- name: "{{ consul_role }} | create user"
+  user:
+    name: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    system: true
+    state: present

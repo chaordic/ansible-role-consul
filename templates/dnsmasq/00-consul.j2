@@ -1,0 +1,70 @@
+{# Regression of server= order (2.69): https://www.mail-archive.com/dnsmasq-discuss@lists.thekelleys.org.uk/msg11692.html #}
+{% if dnsmasq_version.stdout | float >= 2.69 -%}
+
+{# Upstream DNS servers -#}
+{% for server in consul_dnsmasq_servers -%}
+    server={{ server }}
+{% endfor -%}
+
+{# Enable forward lookups for the consul domain with conditional delegation -#}
+{% if consul_delegate_datacenter_dns -%}
+server=/{{ consul_datacenter }}.{{ consul_domain }}/{{ consul_dnsmasq_consul_address }}#{{ consul_ports_dns }}
+{% else %}
+server=/{{ consul_domain }}/{{ consul_dnsmasq_consul_address }}#{{ consul_ports_dns }}
+{% endif -%}
+
+{% else %}
+
+{# Enable forward lookups for the consul domain with conditional delegation -#}
+{% if consul_delegate_datacenter_dns -%}
+server=/{{ consul_datacenter }}.{{ consul_domain }}/{{ consul_dnsmasq_consul_address }}#{{ consul_ports_dns }}
+{% else %}
+server=/{{ consul_domain }}/{{ consul_dnsmasq_consul_address }}#{{ consul_ports_dns }}
+{% endif -%}
+
+{# Upstream DNS servers -#}
+{% for server in consul_dnsmasq_servers -%}
+    server={{ server }}
+{% endfor -%}
+
+{% endif -%}
+
+{# Only bind to specific interfaces -#}
+{% if consul_dnsmasq_bind_interfaces -%}
+bind-interfaces
+{% endif -%}
+
+{# Reverse DNS lookups -#}
+{% for revserver in consul_dnsmasq_revservers -%}
+    rev-server={{ revserver }},{{ consul_dnsmasq_consul_address }}#{{ consul_ports.dns }}
+{% endfor -%}
+
+{# Only accept DNS queries from hosts in the local subnet -#}
+{% if consul_dnsmasq_local_service -%}
+    local-service
+{% endif -%}
+
+{# Don't poll /etc/resolv.conf for changes -#}
+{% if consul_dnsmasq_no_poll -%}
+    no-poll
+{% endif -%}
+
+{# Dont use /etc/resolv.conf to get upstream servers -#}
+{% if consul_dnsmasq_no_resolv -%}
+    no-resolv
+{% endif -%}
+
+{# Custom listen addresses -#}
+{% for address in consul_dnsmasq_listen_addresses -%}
+    listen-address={{ address }}
+{% endfor -%}
+
+{# Cache size -#}
+{% if consul_dnsmasq_cache is defined -%}
+    cache-size={{ consul_dnsmasq_cache }}
+{% endif -%}
+
+{# Query every upstream dns server until get a response -#}
+{% if consul_dnsmasq_strict_order -%}
+    strict-order
+{% endif -%}

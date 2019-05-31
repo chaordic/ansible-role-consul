@@ -1,0 +1,101 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides: consul-{{ consul_role }}
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Consul service discovery framework
+# Description:       Healthchecks local services and registers
+### END INIT INFO
+
+
+NAME=consul-{{ consul_role }}
+USER={{ consul_user }}
+DAEMON={{ consul_dir_bin }}/consul
+DAEMON_ARGS="agent -config-file={{ consul_dir_config }}/config.json \
+            -config-dir={{ consul_dir_configd }} \
+            -pid-file={{ consul_dir_run }}/$NAME.pid"
+CONFIG={{ consul_dir_config }}/config.json
+CONFIGD={{ consul_dir_configd }}
+PIDFILE={{ consul_dir_run }}/$NAME.pid
+
+[ ! -d $(dirname $PIDFILE ) ] && mkdir -p $(dirname $PIDFILE )
+
+do_start_prepare()
+{
+  mkdir -p $(dirname $PIDFILE) || true
+  chown -R $USER: $(dirname $PIDFILE)
+
+  [ -x $DAEMON ] || exit 5
+  umask 077
+}
+
+do_start_cmd()
+{
+  do_start_prepare
+  echo -n "Starting daemon: "$NAME
+  start-stop-daemon --background --quiet --start --pidfile $PIDFILE --exec $DAEMON --user $USER --name consul --chuid $USER -- $DAEMON_ARGS
+  if [ $? != 0 ]; then
+    start-stop-daemon --start --pidfile $PIDFILE --exec $DAEMON --user $USER --name consul --chuid $USER -- $DAEMON_ARGS
+  fi
+  echo "."
+}
+
+do_stop_cmd()
+{
+  echo -n "Stopping daemon: "$NAME
+  start-stop-daemon --stop --signal TERM --retry=TERM/30/KILL/5 --pidfile $PIDFILE --oknodo --exec $DAEMON --name consul
+  echo "."
+}
+
+do_restart_cmd()
+{
+  echo -n "Restarting daemon: "$NAME
+  do_stop_cmd
+  do_start_cmd
+  echo "."
+}
+
+status() {
+  printf "%-50s" "Checking $NAME..."
+  start-stop-daemon --status --quiet --oknodo --pidfile $PIDFILE
+  if [ -f $PIDFILE ]; then
+    PID=$(cat $PIDFILE)
+    if [ -z "$(ps axf | grep ${PID} | grep -v grep)" ]; then
+      printf "%s\n" "The process appears to be dead but pidfile still exists"
+    else
+      echo "Running, the PID is $PID"
+    fi
+  else
+    printf "%s\n" "Service not running"
+  fi
+}
+
+
+case "$1" in
+  start)
+    do_start_cmd
+    ;;
+  stop)
+    do_stop_cmd
+    ;;
+  reload)
+    /bin/kill -HUP $(cat $PIDFILE)
+    ;;
+  restart)
+    do_restart_cmd
+    ;;
+  status)
+    status
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  *)
+    echo "Usage: $1 {start|stop|reload|status|restart}"
+    exit 1
+esac
+
+exit 0

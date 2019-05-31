@@ -1,0 +1,42 @@
+---
+- block:
+  - name: "{{ consul_role }} | validate | create /tmp/consul directory"
+    file:
+      path: /tmp/consul
+      state: directory
+    changed_when: False
+    check_mode: False
+
+  - name: "{{ consul_role }} | validate | copy config file to /tmp"
+    copy:
+      dest: /tmp/consul/config.json
+      owner: "{{ consul_user }}"
+      group: "{{ consul_group }}"
+      mode: 0600
+      content: "{{ lookup('template', 'templates/consul/config.json.j2') | to_nice_json }}"
+    changed_when: False
+    check_mode: False
+
+  - name: "{{ consul_role }} | validate | validating consul config file"
+    command: "{{ consul_dir_bin }}/consul validate /tmp/consul"
+    register: validate_result
+    failed_when: validate_result.rc == 1
+    changed_when: False
+    check_mode: False
+
+  always:
+  - name: "{{ consul_role }} | validate | clean /tmp/consul directory"
+    file:
+      state: absent
+      path: /tmp/consul
+    check_mode: False
+    changed_when: False
+
+- name: "{{ consul_role }} | parse template to consul config file"
+  copy:
+    dest: "{{ consul_dir_config }}/config.json"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0600
+    content: "{{ lookup('template', 'templates/consul/config.json.j2') | to_nice_json }}"
+  notify: reload consul

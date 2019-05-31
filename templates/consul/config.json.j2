@@ -1,0 +1,75 @@
+{
+    {## Node ##}
+    {% if consul_node_name is defined %}
+    "node_name": "{{ consul_node_name }}",
+    {% endif %}
+    "datacenter": "{{ consul_datacenter }}",
+    "domain": "{{ consul_domain }}",
+
+    {## Agent ##}
+    "data_dir": "{{ consul_data_dir }}",
+    "log_level": "{{ consul_log_level }}",
+    "enable_syslog": {{ consul_enable_syslog | bool | to_json }},
+    "syslog_facility": "{{ consul_syslog_facility }}",
+    "leave_on_terminate": {{ consul_leave_on_terminate | bool | to_json }},
+
+    {## Server ##}
+    {% if consul_role == 'server' %}
+    "server": true,
+    "bootstrap_expect": {{ consul_bootstrap_expect | int }},
+    {% else %}
+    "server": false,
+    {% endif %}
+
+    {## Telemetry ##}
+    "telemetry": {
+        "prometheus_retention_time": "{{ consul_prometheus_retention_time }}"
+    },
+
+    {## Auto Join ##}
+    "retry_join":
+    {{ consul_bootstrap_servers | to_json }},
+
+    {## DNS ##}
+    {% if consul_recursors | length > 0 %}
+        "recursors": {{ consul_recursors | to_json }},
+    {% endif %}
+
+    {## Addresses ##}
+    "client_addr": "{{ consul_client_addr }}",
+    "addresses": {
+        {% if consul_version is version_compare('0.8.0', '<') %}
+        "rpc": "{{ consul_addresses_rpc }}",
+        {% endif %}
+        "dns": "{{ consul_addresses_dns }}",
+        "http": "{{ consul_addresses_http }}",
+        "https": "{{ consul_addresses_https }}",
+        {% if consul_version is version_compare('1.3.0', '>=') %}
+        "grpc": "{{ consul_addresses_grpc }}"
+        {% endif %}
+        },
+
+    {## Ports ##}
+    "ports": {
+        {% if consul_version is version_compare('0.8.0', '<') %}
+        "rpc": {{ consul_ports_rpc}},
+        {% endif %}
+        "dns": {{ consul_ports_dns }},
+        "http": {{ consul_ports_http }},
+        "https": {{ consul_ports_https }},
+        "serf_lan": {{ consul_ports_serf_lan }},
+        "serf_wan": {{ consul_ports_serf_wan }},
+        "server": {{ consul_ports_server }},
+        {% if consul_version is version_compare('1.3.0', '>=') %}
+        "grpc": {{ consul_ports_grpc }}
+        {% endif %}
+    },
+
+    {## DNS ##}
+    "dns_config": {
+        "only_passing": {{ consul_only_passing | bool | to_json }}
+    },
+
+    {## UI ##}
+    "ui": {{ consul_ui | bool | to_json }},
+}

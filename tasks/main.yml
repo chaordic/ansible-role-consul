@@ -1,5 +1,39 @@
 ---
-- include: consul.yml
+- include: users.yml
+  tags: consul-users
+
+- include: dirs.yml
+  tags: consul-dirs
+
+- include: config.yml
+  tags: consul-config
+
+- include: install.yml
+  tags: consul-install
+
+- include: init.yml
+  tags: consul-init
+
+- include: services.yml
+  when: consul_services | length > 0
+  tags: consul-services
+
+- include: syslog.yml
+  when: consul_enable_syslog
+  tags: consul-syslog
+
+- include: dnsmasq.yml
+  tags: consul-dnsmasq
+  when: consul_dnsmasq_enable
+
+- include: aws.yml
+  when:
+    - consul_role == 'server'
+    - consul_aws_enable
+  tags: consul-aws
 
 - include: backup.yml
-  when: consul_backup_enabled == true
+  when:
+    - consul_role == 'server'
+    - consul_backup_enable
+  tags: consul-backup

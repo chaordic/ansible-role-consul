@@ -1,0 +1,34 @@
+---
+- name: "{{ consul_role }} | check if consul-aws is installed"
+  stat:
+    path: "{{ consul_dir_bin }}/consul-aws"
+  register: install_result
+
+- name: "{{ consul_role }} | download consul-aws binary"
+  unarchive:
+    src: "{{ consul_aws_url }}"
+    dest: "{{ consul_dir_bin }}"
+    remote_src: true
+    mode: 0755
+  when: install_result.stat.exists == False
+
+- name: "{{ consul_role }} | copy consul-aws systemd unit file"
+  template:
+    src: init/consul-aws-systemd.j2
+    dest: /etc/systemd/system/consul-aws.service
+    owner: root
+    group: root
+    mode: 0644
+  register: systemd_unit
+
+- name: "{{ consul_role }} | enable consul-aws service"
+  service:
+    name: consul-aws
+    state: started
+    enabled: true
+
+- name: "{{ consul_role }} | reload consul-aws systemd unit"
+  systemd:
+    name: consul-aws
+    daemon_reload: true
+  when: systemd_unit.changed

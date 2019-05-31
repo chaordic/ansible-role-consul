@@ -1,31 +1,112 @@
 ---
-# Consul
-consul_group: "consul"
-consul_user: "consul"
+consul_role: server # it could assume server or client role
 
-consul_bin_dir: "/usr/bin"
-consul_config_dir: "/etc/consul"
-consul_configd_dir: "{{ consul_config_dir }}/consul.d"
-consul_data_dir: "/var/consul"
-consul_run_dir_name: "consul"
-consul_run_dir: "/run/{{ consul_run_dir_name }}"
+consul_user: consul
+consul_group: consul
 
-consul_version: "1.4.0"
+consul_dependencies:
+  - unzip
+
+consul_init_enable: true
+consul_init_start: true
+
+consul_version: 1.4.2
 consul_bin_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
 
-consul_config:
-  data_dir: "{{ consul_data_dir }}"
-  log_level: "INFO"
-  enable_syslog: true
-  leave_on_terminate: true
-  telemetry:
-    prometheus_retention_time: 24h
+# directories
+consul_dir_bin: /usr/bin
+consul_dir_config: /etc/consul
+consul_dir_configd: /etc/consul/consul.d
+consul_dir_data: /var/consul
+consul_dir_run: /run/consul
+consul_dir_log: /var/log/consul
 
-consul_systemd_state: started
-consul_systemd_enabled: true
+# logging
+consul_syslog_user: syslog
+consul_syslog_group: syslog
+consul_log_file: "consul-{{ consul_role }}.log"
+consul_log_rotate: 2
 
-# Consul Backinator
-consul_backup_version: "1.6.5"
+# consul configuration
+## node
+consul_datacenter: dc1
+consul_domain: consul
+## agent
+consul_data_dir: "{{ consul_dir_config }}"
+consul_log_level: INFO
+consul_enable_syslog: false
+consul_syslog_facility: local0
+consul_leave_on_terminate: false
+## server
+consul_server: "{{ consul_role }}"
+## auto join
+consul_bootstrap_expect: "{{ consul_bootstrap_servers | length }}"
+consul_bootstrap_servers:
+  - localhost
+## DNS
+consul_recursors: []
+consul_only_passing: false
+## ports
+consul_ports_rpc: 8400
+consul_ports_dns: 8600
+consul_ports_http: 8500
+consul_ports_https: -1
+consul_ports_serf_lan: 8301
+consul_ports_serf_wan: 8302
+consul_ports_server: 8300
+consul_ports_grpc: -1
+## addresses
+consul_client_addr: 0.0.0.0
+consul_addresses_rpc: "{{ consul_client_addr }}"
+consul_addresses_dns: "{{ consul_client_addr }}"
+consul_addresses_http: "{{ consul_client_addr }}"
+consul_addresses_https: "{{ consul_client_addr }}"
+consul_addresses_grpc: "{{ consul_client_addr }}"
+# telemetry
+consul_prometheus_retention_time: 0s
+# ui
+consul_ui: true
+
+# services
+consul_services: []
+
+## DNS
+consul_dnsmasq_enable: false
+consul_delegate_datacenter_dns: false
+consul_dnsmasq_bind_interfaces: false
+consul_dnsmasq_consul_address: "\
+  {# Use localhost if DNS is listening on all interfaces #}\
+  {% if consul_addresses_dns == '0.0.0.0' %}\
+    127.0.0.1\
+  {% else %}\
+    {{ consul_addresses_dns }}\
+  {% endif %}"
+consul_dnsmasq_cache: 0
+consul_dnsmasq_strict_order: true
+consul_dnsmasq_servers:
+  - 8.8.8.8
+  - 8.8.4.4
+consul_dnsmasq_revservers: []
+consul_dnsmasq_no_poll: false
+consul_dnsmasq_no_resolv: false
+consul_dnsmasq_local_service: false
+consul_dnsmasq_listen_addresses: []
+
+# consul-aws
+## download
+consul_aws_enable: false
+consul_aws_version: 0.1.1
+consul_aws_url: "https://releases.hashicorp.com/consul-aws/{{ consul_aws_version }}/consul-aws_{{ consul_aws_version }}_linux_amd64.zip"
+## config
+consul_aws_region: us-east-1
+consul_aws_direction: aws
+consul_aws_prefix: _consul
+consul_aws_poll_interval: 30s
+consul_aws_dns_ttl: 60
+
+# consul backup
+consul_backup_enable: false
+consul_backup_version: 1.6.5
 consul_backup_url: "https://github.com/myENA/consul-backinator/releases/download/v{{ consul_backup_version }}/consul-backinator-{{ consul_backup_version }}-amd64-linux.tar.gz"
-consul_backup_hour: "0"
-consul_backup_enabled: false
+consul_backup_hour: 0
+consul_backup_args: ''

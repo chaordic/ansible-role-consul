@@ -1,38 +1,36 @@
 ---
-- name: create backup_args variable
-  set_fact:
-    backup_args: []
-
-- name: prepare backup args
-  set_fact:
-    backup_args: "{{ backup_args }} +  [ '-{{ item.key }} {{ item.value }}' ]"
-  with_dict: "{{ consul_backup_config }}"
-  when: consul_backup_config is defined
-
-- name: check if installed
+- name: "{{ consul_role }} | check if consul backinator is installed"
   stat:
-    path: "{{ consul_bin_dir }}/consul-backinator"
+    path: "{{ consul_dir_bin }}/consul-backinator"
   register: install_result
 
-- name: download backup tool
-  unarchive:
-    src: "{{ consul_backup_url }}"
-    dest: "{{ consul_bin_dir }}"
-    extra_opts:
-      - "--strip=2"
-    remote_src: true
+- block:
+  - name: "{{ consul_role }} | download consul backinator binary"
+    unarchive:
+      src: "{{ consul_backup_url }}"
+      dest: /tmp
+      extra_opts:
+        - "--strip=2"
+      remote_src: true
+
+  - name: "{{ consul_role }} | copy consul backinator binary"
+    copy:
+      src: "/tmp/consul-backinator-{{ consul_backup_version }}"
+      dest: "{{ consul_dir_bin }}/consul-backinator"
+      remote_src: true
+      mode: 0755
   when: install_result.stat.exists == False
 
-- name: create backup tool symlink
-  file:
-    src: "{{ consul_bin_dir }}/consul-backinator-{{ consul_backup_version }}"
-    dest: "{{ consul_bin_dir }}/consul-backinator"
-    state: link
-  when: install_result.stat.exists == False
+  always:
+  - name: "{{ consul_role }} | clean tmp file"
+    file:
+      state: absent
+      path: "/tmp/consul-backinator-{{ consul_backup_version }}"
 
-- name: create consul backup scheduler
+- name: "{{ consul_role }} | create consul backup schedule"
   cron:
-    name: "consul backup"
-    minute: "0"
+    name: consul backup
+    minute: 0
     hour: "{{ consul_backup_hour }}"
-    job: "consul-backinator backup {{ backup_args | join(' ') }}"
+    user: "{{ consul_user }}"
+    job: "{{ consul_dir_bin }}/consul-backinator backup {{ consul_backup_args }}"

@@ -1,0 +1,23 @@
+---
+- name: "{{ consul_role }} | create directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+  with_items:
+    - "{{ consul_dir_bin }}"
+    - "{{ consul_dir_config }}"
+    - "{{ consul_dir_configd }}"
+    - "{{ consul_dir_data }}"
+    - "{{ consul_dir_run }}"
+
+- name: "{{ consul_role }} | create log directory"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ consul_syslog_user }}"
+    group: "{{ consul_syslog_group }}"
+  with_items:
+    - "{{ consul_dir_log }}"
+  when: consul_enable_syslog

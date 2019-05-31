@@ -1,0 +1,18 @@
+---
+- name: "{{ consul_role }} | install dependencies"
+  package:
+    name: "{{ consul_dependencies }}"
+    state: present
+
+- name: "{{ consul_role }} | check if consul is installed"
+  stat:
+    path: "{{ consul_dir_bin }}/consul"
+  register: install_result
+
+- name: "{{ consul_role }} | download consul binary"
+  unarchive:
+    src: "{{ consul_bin_url }}"
+    dest: "{{ consul_dir_bin }}"
+    remote_src: true
+    mode: 0755
+  when: install_result.stat.exists == False

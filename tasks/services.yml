@@ -1,0 +1,69 @@
+---
+- block:
+  - name: "{{ consul_role }} | validate | create /tmp/consul.d directory"
+    file:
+      path: /tmp/consul.d
+      state: directory
+    changed_when: False
+    check_mode: False
+
+  - name: "{{ consul_role }} | validate | copy consul services to /tmp"
+    template:
+      dest: "/tmp/consul.d/service_{{ item.name }}.json"
+      src: consul/service.json.j2
+      owner: "{{ consul_user }}"
+      group: "{{ consul_group }}"
+      mode: 0644
+    with_items: "{{ consul_services }}"
+    changed_when: False
+    check_mode: False
+
+  - name: "{{ consul_role }} | validate | validating consul services"
+    command: "{{ consul_dir_bin }}/consul validate /tmp/consul.d"
+    register: validate_result
+    failed_when: "'Config validation failed: data_dir cannot be empty' not in validate_result.stderr"
+    changed_when: False
+    check_mode: False
+
+  always:
+  - name: "{{ consul_role }} | validate | clean tmp files"
+    file:
+      state: absent
+      path: /tmp/consul.d
+    changed_when: False
+    check_mode: False
+
+- name: "{{ consul_role }} | configure consul services"
+  template:
+    dest: "{{ consul_dir_configd }}/service_{{ item.name }}.json"
+    src: consul/service.json.j2
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0644
+  with_items: "{{ consul_services }}"
+  notify: reload consul
+
+- name: "{{ consul_role }} | get the list of services config file"
+  find:
+    paths: "{{ consul_dir_configd }}"
+    file_type: file
+  register: services_enabled
+
+- name: "{{ consul_role }} | set fact with list of existing configuration file"
+  set_fact:
+    list_current_service_config: "{{ list_current_service_config |default([]) + [item.path] }}"
+  with_items: "{{ services_enabled['files'] }}"
+
+- name: "{{ consul_role }} | set fact with list of service we manage"
+  set_fact:
+    managed_files: "{{ managed_files |default([]) }} + \
+    [ '{{ consul_dir_configd }}/service_{{ item['name'] }}.json' ]"
+  with_items: "{{ consul_services }}"
+
+- name: "{{ consul_role }} | delete non declared services"
+  file:
+    path:  "{{ item }}"
+    state: absent
+  when: item not in managed_files
+  with_items: "{{ list_current_service_config }}"
+  notify: reload consul
