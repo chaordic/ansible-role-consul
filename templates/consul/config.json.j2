@@ -3,6 +3,10 @@
     {% if consul_node_name is defined %}
     "node_name": "{{ consul_node_name }}",
     {% endif %}
+    {% if consul_node_meta is defined %}
+    "node_meta":
+    {{ consul_node_meta | to_json }},
+    {% endif %}
     "datacenter": "{{ consul_datacenter }}",
     "domain": "{{ consul_domain }}",
 
