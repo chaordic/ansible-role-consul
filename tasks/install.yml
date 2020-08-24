@@ -15,4 +15,4 @@
     dest: "{{ consul_dir_bin }}"
     remote_src: true
     mode: 0755
-  when: install_result.stat.exists == False
+  when: install_result.stat.exists == False or consul_force_install|bool == True
