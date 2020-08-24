@@ -110,3 +110,6 @@ consul_backup_version: 1.6.5
 consul_backup_url: "https://github.com/myENA/consul-backinator/releases/download/v{{ consul_backup_version }}/consul-backinator-{{ consul_backup_version }}-amd64-linux.tar.gz"
 consul_backup_hour: 0
 consul_backup_args: ''
+
+# used to force a new download when updating
+consul_force_install: False
